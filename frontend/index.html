@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nelson-GPT</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Nelson-GPT: Pediatric AI Assistant</h1>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    
+    <input type="text" id="question" placeholder="Ask about pediatrics...">
+    <button onclick="askQuestion()">Ask</button>
+    <p id="answer"></p>
+
+    <script>
+        const BACKEND_URL = "https://nelson-backend.onrender.com"; // Change this after deployment
+
+        async function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            let response = await fetch(`${BACKEND_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            let data = await response.json();
+            if (data.token) {
+                localStorage.setItem("jwt", data.token);
+                alert("Login successful!");
+            } else {
+                alert("Login failed!");
+            }
+        }
+
+        async function askQuestion() {
+            let question = document.getElementById("question").value;
+            let token = localStorage.getItem("jwt");
+
+            let response = await fetch(`${BACKEND_URL}/ask`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ question })
+            });
+            let data = await response.json();
+            document.getElementById("answer").innerText = data.answer;
+        }
+    </script>
+</body>
+</html>

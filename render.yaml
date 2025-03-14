@@ -1,0 +1,14 @@
+services:
+  - name: nelson-gpt-backend
+    type: web
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -b 0.0.0.0:10000 app:app"
+    envVars:
+      - key: MISTRAL_API_KEY
+        value: "your_mistral_api_key"
+
+  - name: nelson-gpt-frontend
+    type: static
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "./frontend"
